@@ -23,13 +23,14 @@ from energat.target import TargetStatus
 
 class EnergyTracer(object):
     def __init__(
-        self, target_pid: int, attach=False, project: str = None, output: str = None
+            self, project: str = None, output: str = None
     ):
         if not target_exists(target_pid):
             logger.error(f"Target application ({target_pid}) doesn't exist!!!\n")
             exit(1)
 
-        self.target_process = psutil.Process(target_pid) if target_pid > 0 else None
+        self.setup_complete = False
+
         self.core_pkg_map = self.get_core_pkg_mapping()
         self.num_cpu_sockets = len(set(self.core_pkg_map.values()))
         # * [[pkg_max1, pkg_max2, ...], [dram_max1, dram_max2, ...]]
@@ -66,9 +67,12 @@ class EnergyTracer(object):
         self.baseline = BaselinePower(self.num_cpu_sockets)
         self.baseline_file = FLAGS.basefile
 
-        if attach:
-            self.load_baseline_power()
+        self.load_baseline_power()
         return
+
+    def setup(self, target_pid: int):
+        self.target_process = psutil.Process(target_pid) if target_pid > 0 else None
+
 
     def run(self, rapl_interval_sec=FLAGS.interval):
         ts_start = time.perf_counter()
