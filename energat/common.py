@@ -45,7 +45,7 @@ flags.DEFINE_float(
 flags.DEFINE_enum("loglvl", "debug", ["info", "debug"], "Logging level (info/debug)")
 
 config_flags.DEFINE_config_file("config", default="./configs/default.py")
-FLAGS(sys.argv)
+FLAGS(["",""])
 ############################################
 
 # * RNG for reproducibility.

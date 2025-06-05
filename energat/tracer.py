@@ -25,9 +25,6 @@ class EnergyTracer(object):
     def __init__(
             self, project: str = None, output: str = None
     ):
-        if not target_exists(target_pid):
-            logger.error(f"Target application ({target_pid}) doesn't exist!!!\n")
-            exit(1)
 
         self.setup_complete = False
 
@@ -71,6 +68,9 @@ class EnergyTracer(object):
         return
 
     def setup(self, target_pid: int):
+        if not target_exists(target_pid):
+            logger.error(f"Target application ({target_pid}) doesn't exist!!!\n")
+            exit(1)
         self.target_process = psutil.Process(target_pid) if target_pid > 0 else None
 
 
